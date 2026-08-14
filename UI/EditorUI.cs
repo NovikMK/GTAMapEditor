@@ -52,6 +52,8 @@ namespace GtaEditor.UI
 
         private const int DEFAULT_GUI_FONT = 17;
 
+        private const int WS_EX_CLIENTEDGE = 0x00000200;
+
 
         // ============================================================
         // WIN32 API
@@ -600,12 +602,5 @@ namespace GtaEditor.UI
 
             DestroyWindow(_topMenu);
         }
-
-
-        // ============================================================
-        // WIN32 CONSTANT
-        // ============================================================
-
-        private const int WS_EX_CLIENTEDGE = 0x00000200;
     }
 }
