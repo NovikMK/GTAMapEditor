@@ -53,6 +53,10 @@ namespace GtaEditor.UI
         private const int DEFAULT_GUI_FONT = 17;
 
         private const int WS_EX_CLIENTEDGE = 0x00000200;
+        private const int WS_EX_COMPOSITED = 0x02000000;
+
+        private const int SS_OWNERDRAW = 0x0000000D;
+        private const int WM_CTLCOLORSTATIC = 0x0138;
 
 
         // ============================================================
@@ -166,16 +170,22 @@ namespace GtaEditor.UI
         private void CreateInterface()
         {
             // ========================================================
-            // ВЕРХНЯЯ ПАНЕЛЬ
+            // ВЕРХНЯЯ ПАНЕЛЬ - контейнер для кнопок меню
             // ========================================================
 
-            _topMenu = CreateControl(
+            _topMenu = CreateWindowEx(
+                0,
                 "STATIC",
                 "",
+                WS_CHILD | WS_VISIBLE,
                 0,
                 0,
                 1000,
-                TopMenuHeight
+                TopMenuHeight,
+                _parentHandle,
+                IntPtr.Zero,
+                IntPtr.Zero,
+                IntPtr.Zero
             );
 
 
@@ -183,8 +193,19 @@ namespace GtaEditor.UI
             // КНОПКА ФАЙЛ
             // ========================================================
 
-            _fileButton = CreateButton(
-                "Файл"
+            _fileButton = CreateWindowEx(
+                0,
+                "BUTTON",
+                "Файл",
+                WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                10,
+                8,
+                80,
+                24,
+                _topMenu,
+                IntPtr.Zero,
+                IntPtr.Zero,
+                IntPtr.Zero
             );
 
 
@@ -192,8 +213,19 @@ namespace GtaEditor.UI
             // КНОПКА НАСТРОЙКИ
             // ========================================================
 
-            _settingsButton = CreateButton(
-                "Настройки"
+            _settingsButton = CreateWindowEx(
+                0,
+                "BUTTON",
+                "Настройки",
+                WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                95,
+                8,
+                100,
+                24,
+                _topMenu,
+                IntPtr.Zero,
+                IntPtr.Zero,
+                IntPtr.Zero
             );
 
 
@@ -201,22 +233,39 @@ namespace GtaEditor.UI
             // КНОПКА О ПРОГРАММЕ
             // ========================================================
 
-            _aboutButton = CreateButton(
-                "О программе"
+            _aboutButton = CreateWindowEx(
+                0,
+                "BUTTON",
+                "О программе",
+                WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                200,
+                8,
+                110,
+                24,
+                _topMenu,
+                IntPtr.Zero,
+                IntPtr.Zero,
+                IntPtr.Zero
             );
 
 
             // ========================================================
-            // ЛЕВАЯ ПАНЕЛЬ
+            // ЛЕВАЯ ПАНЕЛЬ - контейнер для элементов сцены
             // ========================================================
 
-            _sidePanel = CreateControl(
+            _sidePanel = CreateWindowEx(
+                WS_EX_CLIENTEDGE,
                 "STATIC",
                 "",
+                WS_CHILD | WS_VISIBLE,
                 0,
                 TopMenuHeight,
                 SidePanelWidth,
-                500
+                500,
+                _parentHandle,
+                IntPtr.Zero,
+                IntPtr.Zero,
+                IntPtr.Zero
             );
 
 
@@ -230,7 +279,8 @@ namespace GtaEditor.UI
                 10,
                 TopMenuHeight + 10,
                 SidePanelWidth - 20,
-                25
+                25,
+                0
             );
 
 
@@ -244,7 +294,8 @@ namespace GtaEditor.UI
                 10,
                 TopMenuHeight + 40,
                 SidePanelWidth - 20,
-                25
+                25,
+                0
             );
 
 
@@ -294,13 +345,22 @@ namespace GtaEditor.UI
             int x,
             int y,
             int width,
-            int height)
+            int height,
+            int exStyle = 0)
         {
+            int style = WS_CHILD | WS_VISIBLE;
+            
+            // Добавляем рамку только если не используется WS_EX_CLIENTEDGE
+            if (exStyle == 0)
+            {
+                style |= WS_BORDER;
+            }
+            
             return CreateWindowEx(
-                0,
+                exStyle,
                 className,
                 text,
-                WS_CHILD | WS_VISIBLE,
+                style,
                 x,
                 y,
                 width,
@@ -330,7 +390,7 @@ namespace GtaEditor.UI
                 0,
                 0,
                 100,
-                TopMenuHeight,
+                TopMenuHeight - 8,
                 _topMenu,
                 IntPtr.Zero,
                 IntPtr.Zero,
@@ -446,7 +506,7 @@ namespace GtaEditor.UI
 
 
             // ========================================================
-            // ВЕРХНЯЯ ПАНЕЛЬ
+            // ВЕРХНЯЯ ПАНЕЛЬ - растягиваем на всю ширину
             // ========================================================
 
             SetWindowPos(
@@ -468,10 +528,10 @@ namespace GtaEditor.UI
             SetWindowPos(
                 _fileButton,
                 IntPtr.Zero,
-                5,
-                4,
+                10,
+                8,
                 80,
-                28,
+                24,
                 SWP_NOZORDER |
                 SWP_NOACTIVATE
             );
@@ -484,10 +544,10 @@ namespace GtaEditor.UI
             SetWindowPos(
                 _settingsButton,
                 IntPtr.Zero,
-                90,
-                4,
-                110,
-                28,
+                95,
+                8,
+                100,
+                24,
                 SWP_NOZORDER |
                 SWP_NOACTIVATE
             );
@@ -500,17 +560,17 @@ namespace GtaEditor.UI
             SetWindowPos(
                 _aboutButton,
                 IntPtr.Zero,
-                205,
-                4,
-                120,
-                28,
+                200,
+                8,
+                110,
+                24,
                 SWP_NOZORDER |
                 SWP_NOACTIVATE
             );
 
 
             // ========================================================
-            // ЛЕВАЯ ПАНЕЛЬ
+            // ЛЕВАЯ ПАНЕЛЬ - растягиваем по высоте
             // ========================================================
 
             SetWindowPos(
@@ -529,7 +589,7 @@ namespace GtaEditor.UI
 
 
             // ========================================================
-            // СЦЕНА
+            // СЦЕНА - внутри sidePanel координаты относительные
             // ========================================================
 
             SetWindowPos(
@@ -545,7 +605,7 @@ namespace GtaEditor.UI
 
 
             // ========================================================
-            // IPL
+            // IPL - внутри sidePanel координаты относительные
             // ========================================================
 
             SetWindowPos(
@@ -561,7 +621,7 @@ namespace GtaEditor.UI
 
 
             // ========================================================
-            // IPL LIST
+            // IPL LIST - внутри sidePanel координаты относительные
             // ========================================================
 
             SetWindowPos(
