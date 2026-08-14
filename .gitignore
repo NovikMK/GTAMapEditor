@@ -1,1 +1,96 @@
-Nothing should be ignored based on the provided file changes, as only a source code file (`UI/EditorUI.cs`) was modified and no build artifacts, dependencies, or temporary files were detected.
+```
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+*.so
+*.dylib
+*.class
+*.o
+*.obj
+*.out
+
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.egg-info/
+dist/
+build/
+target/
+.gradle/
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Python specific
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.manifest
+*.spec
+
+# Compiled Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.manifest
+*.spec
+
+# MyPy cache
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pytest cache
+.pytest_cache/
+
+# Distribution / packaging
+.Python
+env/
+venv/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.gitattributes
+.project
+.pydevproject
+.vscode/settings.json
+```
